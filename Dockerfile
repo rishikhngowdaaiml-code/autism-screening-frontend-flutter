@@ -1,5 +1,9 @@
 # -------- Stage 1: Build Flutter Web App --------
-FROM cirrusci/flutter:latest AS builder
+FROM cirrusci/flutter:3.13.0 AS builder
+
+# Set environment variables for reliable package fetching
+ENV PUB_HOSTED_URL=https://pub.dev
+ENV FLUTTER_STORAGE_BASE_URL=https://storage.googleapis.com
 
 # Set working directory
 WORKDIR /app
@@ -10,8 +14,8 @@ COPY . .
 # Get dependencies
 RUN flutter pub get
 
-# Build the web app
-RUN flutter build web
+# Build the web app in release mode
+RUN flutter build web --release --no-tree-shake-icons
 
 # -------- Stage 2: Serve with Nginx --------
 FROM nginx:alpine
